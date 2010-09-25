@@ -7,6 +7,8 @@
         <script type="text/javascript" src="libs/js/jquery-ui-1.8.5.custom.min.js"></script>
         <script type="text/javascript">
 			$(function() {
+                var score = 0;
+                var username = null;
                 $.getJSON(
                     "http://localhost:3000/question",
                     function(questionData) {
@@ -24,7 +26,10 @@
                     });
 
 			    function countDownComplete () {
-				    $('#test-content').text("Tadah!");				
+				    if(hadCorrectAnswer) {
+                        score += 100;
+                        $("#score").text(score);
+                    }
 			    }
 
                 var countDown = null;
@@ -54,10 +59,6 @@
 							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
 							'jpg': 'taf.jpg'};
 
-				//$('#qimage').click(function() {
-				//	updateData(newData);
-				//});
-
                 function getMovieThumbnail(objectId, imgId, aId) {
                     $.getJSON("http://www.freebase.com/experimental/topic/standard?callback=?", {id: objectId}, function(response) {
                         var result = response[objectId].result;
@@ -86,6 +87,20 @@
 				$(".answer-radio").click(function(){
 					$('#test-content').text("You Selected: " + $(this).find(".answer-text").text());
 				});
+
+                $("#login").click(function() {
+                    if($("#login").text() == "") {
+                        alert("Please specify a username");
+                    } else {
+                        username = $("#username").val();
+                        score = 0;
+                        $("#usernameDisplay").text("Welcome, " + username + "!");
+                        $("#score").text(score);
+                        $("#loginForm").remove();
+                        $("#scoreDisplay").show();
+                    }
+                    return false;
+                });
             });
         </script>
 		<link rel="stylesheet" type="text/css" media="screen" title="User Defined Style" href="default.css" />
@@ -142,6 +157,16 @@
 	</style>
 </head>
 <body>
+<form id="loginForm">
+    <label for="username">Username: </label>
+    <input type="text" id="username"/>
+    <button id="login">Login</button>
+</form>
+<div id="scoreDisplay"  style="display: none">
+<div id="usernameDisplay"></div>
+<span>Your score:</span><span id="score"></span>
+</div>
+<p id="score"></p>
 <div id="content-box">
 <div id="qimage"><a id="qthumblink" href="javascript:void()"><img id="qimg" src="bttf.jpg"/></a></div>
 <noscript><div id="no-script">Please Enable Javascript!</div></noscript>
