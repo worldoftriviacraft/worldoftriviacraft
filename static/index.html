@@ -10,8 +10,17 @@
                         'http://localhost:3000/question',
                         function(response) {
                             document.write("<b>" + response.text + "</b><br>");
-                        }
-                );
+                        });
+
+				var data = {"text":"Who played Fester in The Addams Family?",'answers':['Fred', 'Bob', 'George', 'Alfred']};
+
+				$('#qimage').click(function() {
+					$('#qtext').html(data.text);
+					for (j = 0; j <= 4; j++ ) {
+						$('#answer-text-'+j).html(data.answers[j]);
+					}
+					return false;
+					});
             });
         </script>
 		<link rel="stylesheet" type="text/css" media="screen" title="User Defined Style" href="default.css" />
@@ -35,8 +44,11 @@
 		width:95px;
 		height:150px;
 	}
-	@answer-radio {
-		font-size: 30pt;
+	.answer-radio {
+		font-size: 12pt;
+	}
+	.answer-text {
+		display: inline;
 	}
 	p {margin-left:20px;}
 	body {
@@ -62,11 +74,12 @@
 <noscript><div id="no-script">Please Enable Javascript!</div></noscript>
 <div id="qa-box">
 <div id="qtext">Who played Marty McFly in the movie Back to the Future?</div>
-<div id="answera" class="answer-radio"><input type="radio" value="Mark Hamil" />Mark Hamil</div>
-<div id="answerb" class="answer-radio"><input type="radio" value="Mark Hamil" />Cristopher Lloyd</div>
-<div id="answerc" class="answer-radio"><input type="radio" value="Mark Hamil" />Betty Grable</div>
-<div id="answerd" class="answer-radio"><input type="radio" value="Mark Hamil" />Michael J. Fox</div>
+<div id="answer-0" class="answer-radio"><input type="radio" name="answer" value="ans0" /><div id="answer-text-0" class="answer-text">Mark Hamil</div></div>
+<div id="answer-1" class="answer-radio"><input type="radio" name="answer" value="ans1" /><div id="answer-text-1" class="answer-text">Cristopher Lloyd</div></div>
+<div id="answer-2" class="answer-radio"><input type="radio" name="answer" value="ans2" /><div id="answer-text-2" class="answer-text">Betty Grable</div></div>
+<div id="answer-3" class="answer-radio"><input type="radio" name="answer" value="ans3" /><div id="answer-text-3" class="answer-text">Michael J. Fox</div></div>
 <div id="countdown">Countdown: 15 sec</div>
+<div id="test-content"><div>
 </div>
 </div>
 </body>
