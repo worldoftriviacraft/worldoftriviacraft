@@ -9,27 +9,31 @@
 			$(function() {
                 var correctAnswer = "";
 
-                $.getJSON(
-                    "http://localhost:3000/question",
-                    function(questionData) {
-                        getMovieThumbnail(questionData.id, "#qimg", "#qthumblink");
-                        $('#qtext').text(questionData.text);
-                        for (var i = 0; i < 4; ++i) {
-                            if (questionData.answers[i].name != null) {
-                                correctAnswer = questionData.answers[questionData.correctAnswerIndex].name;
-                                $('#answer-text-' + i).text(questionData.answers[i].name);
-                                $('#answer-img-' + i).show();
-                                getMovieThumbnail(questionData.answers[i].id, "#answer-img-" + i, "#answer-img-href-" + i);
-                            } else {
-                                correctAnswer = questionData.answers[questionData.correctAnswerIndex];
-                                $('#answer-text-' + i).text(questionData.answers[i]);
-                                $('#answer-img-' + i).hide();
+                function getNewQuestion() {
+                    $.getJSON(
+                        "http://localhost:3000/question",
+                        function(questionData) {
+                            getMovieThumbnail(questionData.id, "#qimg", "#qthumblink");
+                            $('#qtext').text(questionData.text);
+                            for (var i = 0; i < 4; ++i) {
+                                if (questionData.answers[i].name != null) {
+                                    correctAnswer = questionData.answers[questionData.correctAnswerIndex].name;
+                                    $('#answer-text-' + i).text(questionData.answers[i].name);
+                                    getMovieThumbnail(questionData.answers[i].id, "#answer-img-" + i, "#answer-img-href-" + i);
+                                    $('#answer-img-' + i).show();
+                                } else {
+                                    correctAnswer = questionData.answers[questionData.correctAnswerIndex];
+                                    $('#answer-text-' + i).text(questionData.answers[i]);
+                                    $('#answer-img-' + i).hide();
+                                }
                             }
-                        }
-                    });
+                        });
+                    countDown(4, 4);
+                }
 
 			    function countDownComplete () {
 				    $('#test-content').text("Tadah!");
+                    getNewQuestion();
 			    }
 
                 var countDown = null;
@@ -53,7 +57,6 @@
 				    $('#qimg').attr({ src: data.jpg });
 			    }
 
-				countDown(4, 4);
 
 				var newData = {"text":"Who played Fester in The Addams Family?",
 							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
@@ -80,7 +83,8 @@
                         }
                     });
                 }
-                getMovieThumbnail("/en/margaret_2006", "#qimg", "#qthumblink");
+                //getMovieThumbnail("/en/margaret_2006", "#qimg", "#qthumblink");
+                getNewQuestion();
 
 				$(".answer-radio").hover(function() {
 					$(this).css("border", "2px dashed #6a6");
