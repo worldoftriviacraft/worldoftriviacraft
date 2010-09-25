@@ -68,6 +68,10 @@
                     });
                 }
                 getMovieThumbnail("/en/margaret_2006", "#qimg", "#qthumblink");
+
+				$(".answer-radio").click(function(){
+					$('#test-content').text("You Selected: " + $(this).find(".answer-text").text());
+				});
             });
         </script>
 		<link rel="stylesheet" type="text/css" media="screen" title="User Defined Style" href="default.css" />
