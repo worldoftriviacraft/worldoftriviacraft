@@ -143,6 +143,8 @@
                     return false;
                 });
             });
+            $(".answer-radio h3").css("margin", "2px");
+            $(".answer-radio h3").css("padding", "2px");
         </script>
 		<link rel="stylesheet" type="text/css" media="screen" title="User Defined Style" href="default.css" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -169,9 +171,13 @@
         .answer-radio {
             font-size: 12pt;
             border: 2px dashed #fff;
+
+            text-align: center;
         }
+        
         .answer-text {
-            display: inline;
+            vertical-align: middle;
+            margin: 0;
         }
         .selected-question {
             border: 2px dashed #636;
@@ -222,9 +228,9 @@
         <input type="text" id="username"/>
         <button id="login">Login</button>
     </form>
-    <div id="scoreDisplay"  style="display: none">
+    <div id="scoreDisplay">
         <h3 id="usernameDisplay"></h3>
-        <h3 id="score"></h3>
+        <h3 id="score">Your score: 0</h3>
     </div>
     
 <div id="content-box" class="ui-corner-all">
@@ -235,19 +241,19 @@
         <h2 id="qtext"></h2>
         <div id="answer-0" class="answer-radio">
             <a id="answer-img-href-0" href=""><img id="answer-img-0" src="" /></a>
-            <h3 id="answer-text-0" class="answer-text"></h3>
+            <h4 id="answer-text-0" class="answer-text"></h4>
         </div>
         <div id="answer-1" class="answer-radio">
             <a id="answer-img-href-1" href=""><img id="answer-img-1" src="" /></a>
-            <h3 id="answer-text-1" class="answer-text"></h3>
+            <h4 id="answer-text-1" class="answer-text"></h4>
         </div>
         <div id="answer-2" class="answer-radio">
             <a id="answer-img-href-2" href=""><img id="answer-img-2"  src=""/></a>
-            <h3 id="answer-text-2" class="answer-text"></h3>
+            <h4 id="answer-text-2" class="answer-text"></h4>
         </div>
         <div id="answer-3" class="answer-radio">
             <a id="answer-img-href-3" href=""><img id="answer-img-3" src="" /></a>
-            <h3 id="answer-text-3" class="answer-text"></h3>
+            <h4 id="answer-text-3" class="answer-text"></h4>
         </div>
         <div id="bottomPart">
             <div id="countdown" class="countdown">Countdown: <h2 id="cd-num" style="display:inline;"></h2> sec</div>
