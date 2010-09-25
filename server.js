@@ -21,13 +21,16 @@ var sendResponse = function(response, query, result) {
 var currentQuestion = "";
 var currentCountdown = "";
 
+var maxMovies = 5000;
+var chunkSize = 100;
 var movies = [];
 var currentQueston = "";
 var currentAnswers = [];
 
 var freebase = http.createClient(80, "api.freebase.com");
 var cursor = true;
-var getNextMovie = function(callback) {
+var getNextMovie = null;
+getNextMovie = function(perMovieCallback, endCallback) {
     var params = {
         "cursor": cursor,
         "query":[
@@ -41,19 +44,22 @@ var getNextMovie = function(callback) {
                 "name":          null,
                 "id":            null,
                 "/film/film/initial_release_date": null,
-                "/film/film/directed_by": null,
-                "/film/film/genre": null,
+                "/film/film/directed_by": [],
+                "/film/film/genre": [],
                 "/film/film/starring": [
-                    "/film/performance/actor": null,
-                    "/film/performance/character": null
+                    {
+                        "/film/performance/actor": null,
+                        "/film/performance/character": null
+                    }
                 ],
-                "limit":         1
+                "limit":         chunkSize
             }
         ]
     }
 
     var url = "/api/service/mqlread?query=";
     url += escape(JSON.stringify(params));
+    console.log("Requesting movies");
     var request = freebase.request("GET", url);
     request.end();
     request.on("response", function(response) {
@@ -64,26 +70,37 @@ var getNextMovie = function(callback) {
             fullResponse += chunk;
         });
         response.on("end", function() {
-            console.log("Movie list response: " + fullResponse);
+            //console.log("Movie list response: " + fullResponse);
             var info = JSON.parse(fullResponse);
             cursor = info.cursor;
-            if(callback) {
-                callback(info);
+            if(info.result && info.result.length > 0 && perMovieCallback) {
+                for(var cur in info.result) {
+                    perMovieCallback(info.result[cur]);
+                }
+            }
+            if(endCallback) {
+                endCallback();
             }
         });
     });
 }
 
-var getMovieDetails = function(info, callback) {
+var storeMovieDetails = null;
+storeMovieDetails = function(info) {
     var details = {
                     id: info.id,
                     title: info.name,
                     year: info["/film/film/initial_release_date"],
-                    director: info["/film/film/directed_by"],
-                    genre: info["/film/film/genre"]
+                    director: null,
+                    genre: null,
                     actors: [],
                     characters: []
                   };
+
+    if(info["/film/film/genre"])
+        details.genre = info["/film/film/genre"][0];
+    if(info["/film/film/directed_by"])
+        details.director = info["/film/film/directed_by"][0];
 
     var starInfo = info["/film/film/starring"];
     for(curStar in starInfo) {
@@ -100,29 +117,21 @@ var getMovieDetails = function(info, callback) {
         details.characters.push({actor: actorName, character: characterName});
     }
 
-    var url = "http://www.freebase.com/experimental/topic/standard?id=";
-    url += escape(info.id);
-
-    var request = freebase.request("GET", url);
-    request.end();
-    request.on("response", function(response) {
-        console.log("Movie details request status: " + response.statusCode);
-        response.setEncoding('utf8');
-        var fullResponse = "";
-        response.on("data", function(chunk) {
-            fullResponse += chunk;
-        });
-        response.on("end", function() {
-            console.log("Movie details response: " + fullResponse);
-            var details = JSON.parse(fullResponse);
-            if(callback) {
-                callback(info);
-            }
-        });
-    });
+    console.log("Adding movie: " + details.title);
+    movies.push(details);
 }
 
-getNextMovie();
+var requestMoreMovies = null;
+requestMoreMovies = function() {
+    console.log("Have " + movies.length + " movies");
+    if(movies.length < maxMovies) {
+        setTimeout(function() {
+            getNextMovie(storeMovieDetails, requestMoreMovies);
+        }, 1000);
+    }
+}
+
+getNextMovie(storeMovieDetails, requestMoreMovies);
 
 app.get("/request_one.json", function(request, response) {
     var query = url.parse(request.url, true).query;
