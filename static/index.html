@@ -25,7 +25,10 @@
                             $("img").attr("src", "");
                             for (var i = 0; i < 4; ++i) {
                                 if (questionData.answers[i].name) {
-                                    correctAnswer = questionData.answers[questionData.correctAnswerIndex].name;
+                                    if(questionData.answers[questionData.correctAnswerIndex].name)
+                                        correctAnswer = questionData.answers[questionData.correctAnswerIndex].name;
+                                    else
+                                        correctAnswer = questionData.answers[questionData.correctAnswerIndex];
                                     $('#answer-text-' + i).text(questionData.answers[i].name);
                                     getMovieThumbnail(questionData.answers[i].id, "#answer-img-" + i, "#answer-img-href-" + i);
                                     $('#answer-img-' + i).show();
