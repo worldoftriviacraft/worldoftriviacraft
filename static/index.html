@@ -6,20 +6,22 @@
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $.getJSON(
+                /*$.getJSON(
                         'http://localhost:3000/question',
                         function(response) {
                             document.write("<b>" + response.text + "</b><br>");
-                        });
+                        });*/
 
-				var data = {"text":"Who played Fester in The Addams Family?",'answers':['Fred', 'Bob', 'George', 'Alfred']};
+				var data = {"text":"Who played Fester in The Addams Family?",
+							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
+							'jpg': 'taf.jpg'};
 
 				$('#qimage').click(function() {
-					$('#qtext').html(data.text);
+					$('#qtext').text(data.text);
 					for (j = 0; j <= 4; j++ ) {
 						$('#answer-text-'+j).html(data.answers[j]);
 					}
-					return false;
+					$('#qimg').attr({ src: data.jpg });
 					});
             });
         </script>
@@ -40,7 +42,6 @@
 	}
 	#qimage {
 		margin:0px auto;
-		background-image: url("bttf.jpg");
 		width:95px;
 		height:150px;
 	}
@@ -70,7 +71,7 @@
 </head>
 <body>
 <div id="content-box">
-<div id="qimage"></div>
+<div id="qimage"><img id="qimg" src="bttf.jpg" /></div>
 <noscript><div id="no-script">Please Enable Javascript!</div></noscript>
 <div id="qa-box">
 <div id="qtext">Who played Marty McFly in the movie Back to the Future?</div>

@@ -21,11 +21,12 @@ var sendResponse = function(response, query, result) {
 var currentQuestion = "";
 var currentCountdown = "";
 
-var maxMovies = 100;
-var chunkSize = 100;
+var maxMovies = 30;
+var chunkSize = 30;
 var movies = [];
-var actors = [];
 var directors = [];
+var actors = [];
+var characters = [];
 var currentQueston = "";
 var currentAnswers = [];
 
@@ -101,8 +102,10 @@ storeMovieDetails = function(info) {
 
     if(info["/film/film/genre"])
         details.genre = info["/film/film/genre"][0];
-    if(info["/film/film/directed_by"])
+    if(info["/film/film/directed_by"]) {
         details.director = info["/film/film/directed_by"][0];
+        directors.push(details.director);
+    }
 
     var starInfo = info["/film/film/starring"];
     for(var curStar in starInfo) {
@@ -111,9 +114,11 @@ storeMovieDetails = function(info) {
         var characterName = null;
         if(curDetails["/film/performance/actor"]) {
             actorName = curDetails["/film/performance/actor"];
+            actors.push(actorName);
         }
         if(curDetails["/film/performance/character"]) {
             characterName = curDetails["/film/performance/character"];
+            characters.push(characterName);
         }
         details.actors.push({actor: actorName, character: characterName});
         details.characters.push({actor: actorName, character: characterName});
@@ -130,6 +135,13 @@ requestMoreMovies = function() {
         setTimeout(function() {
             getNextMovie(storeMovieDetails, requestMoreMovies);
         }, 1000);
+    } else {
+        /*console.log("actors");
+        console.log(actors);
+        console.log("characters");
+        console.log(characters);
+        console.log("directors");
+        console.log(directors);*/
     }
 }
 
@@ -181,7 +193,7 @@ function constructQuestion() {
                     }
                     break;
             case 1:
-                    question['text'] = "Who directed the " + info.year + " " + info.genre + " movie?";
+                    question['text'] = "Who directed the " + info.year + " " + info.genre + " movie " + info.title + "?";
                     constructAnswers(question, info.director, directors);
                     break;
             case 2:
@@ -190,7 +202,7 @@ function constructQuestion() {
                     break;
             case 3:
                     question['text'] = "Who played " + info.characters[0].character + " in " + info.title + "?";
-                    constructAnswers(question, info.actors[0].actor, actors);
+                    constructAnswers(question, info.characters[0].actor, actors);
                     break;
         }
 
