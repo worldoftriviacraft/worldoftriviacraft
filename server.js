@@ -118,7 +118,10 @@ storeMovieDetails = function(info) {
         }
         if(curDetails["/film/performance/character"]) {
             characterName = curDetails["/film/performance/character"];
-            characters.push(characterName);
+            console.log(characterName);
+            if (characterName) {
+                characters.push(characterName);
+            }
         }
         details.actors.push({actor: actorName, character: characterName});
         details.characters.push({actor: actorName, character: characterName});
@@ -154,10 +157,11 @@ app.get("/request_one.json", function(request, response) {
 });
 
 function constructAnswers(question, realAnswer, alternates) {
-    var realAnswerIndex = Math.floor(Math.random() * 4);
+    var correctAnswerIndex = Math.floor(Math.random() * 4);
+    question['correctAnswerIndex'] = correctAnswerIndex;
 
     for (var i = 0; i < 4; ++i) {
-        if (i === realAnswerIndex) {
+        if (i === correctAnswerIndex) {
             question['answers'][i] = realAnswer;
         } else {
             if (alternates.length != 0) {
@@ -175,22 +179,17 @@ function constructQuestion() {
         var info = movies[movieIndex];
 
         var questionIndex = Math.floor(Math.random() * 4 /* hardcoded */);
-        var question = {'text': "", 'answers': []};
+        var question = {'text': "", 'answers': [], correctAnswerIndex: 0, id: info.id};
         console.log(questionIndex);
         switch(questionIndex) {
             case 0:
                     question['text'] = "When was " + info.title + " released?";
 
-                    var realAnswerIndex = Math.floor(Math.random() * 4);
+                    var alternates = [];
                     for (var i = 0; i < 4; ++i) {
-                        var answer = 0;
-                        if (i === realAnswerIndex) {
-                            answer = info.year;
-                        } else {
-                            answer = 1980 + Math.floor(Math.random() * 20);
-                        }
-                        question['answers'][i] = answer;
+                        alternates[i] = 1980 + Math.floor(Math.random() * 20);
                     }
+                    constructAnswers(question, parseFloat(info.year), alternates);
                     break;
             case 1:
                     question['text'] = "Who directed the " + info.year + " " + info.genre + " movie " + info.title + "?";
@@ -201,6 +200,7 @@ function constructQuestion() {
                     constructAnswers(question, info.actors[0].actor, actors);
                     break;
             case 3:
+                    console.log(info);
                     question['text'] = "Who played " + info.characters[0].character + " in " + info.title + "?";
                     constructAnswers(question, info.characters[0].actor, actors);
                     break;
