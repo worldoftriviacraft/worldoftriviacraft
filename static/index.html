@@ -11,6 +11,7 @@
                 var username = null;
                 var selectedAnswer = null;
                 var correctAnswer = "";
+                var enableCountdown = true;
 
                 function getNewQuestion() {
                     $.getJSON(
@@ -33,7 +34,8 @@
                                 }
                             }
                         });
-                    countDown(4, 4);
+                    enableCountdown = true;
+                    countDown(20, 20);
                 }
 
 			    function countDownComplete () {
@@ -41,12 +43,14 @@
                         score += 100;
                         $("#score").text(score);
                         $("#winInfo").text("Correct! You get 100 points!");
-                    } else {
+                    } else if(selectedAnswer) {
                         $("#winInfo").text("Doh! The correct answer was " + correctAnswer);
+                    } else {
+                        $("#winInfo").text("Time ran out :/... the correct answer was " + correctAnswer);
                     }
                     selectedAnswer = null;
                     correctAnswer = "";
-                    setTimeout(function() { getNewQuestion(); }, 3000);
+                    setTimeout( getNewQuestion, 3000);
 			    }
 
                 var countDown = null;
@@ -59,7 +63,9 @@
 					    return true;
 				    }
 				    $('#cd-num').text(Math.floor(secs));
-				    setTimeout(function() { countDown(secs - .05, maxSecs) }, 50);
+                    if(enableCountdown) {
+        				    setTimeout(function() { countDown(secs - .05, maxSecs) }, 50);
+                    }
 			    }
 
 			    function updateData(data) {
@@ -102,10 +108,14 @@
 				});
 
 				$(".answer-radio").click(function(){
+                    selectedAnswer = $(this).find(".answer-text").text()
 					$('#test-content').text("You Selected: " + $(this).find(".answer-text").text());
 					$('.answer-radio').removeClass("selected-question");
 					$(this).toggleClass("selected-question");
 					$(this).css("border", "2px dashed #636");
+                    if(enableCountdown)
+                        countDownComplete();
+                    enableCountdown = false;
 				});
 
                 $("#login").click(function() {
