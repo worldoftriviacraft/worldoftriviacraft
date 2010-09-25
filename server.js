@@ -231,15 +231,15 @@ function constructQuestion() {
     }
 }
 
-var question = null;
+//var question = null;
 
 app.get('/question', function(request, response) {
-    if(!question)
-        question = constructQuestion();
+    //if(!question)
+    var question = constructQuestion();
     response.send(JSON.stringify(question));
 });
 
-setInterval(function() { question = constructQuestion(); console.log("new question: " + JSON.stringify(question)) }, 5000);
+//setInterval(function() { question = constructQuestion(); console.log("new question: " + JSON.stringify(question)) }, 5000);
 
 app.configure(function() {
     app.use(app.router);
