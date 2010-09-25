@@ -16,6 +16,8 @@
                     $.getJSON(
                         "http://localhost:3000/question",
                         function(questionData) {
+                            $('#winInfo').text("");
+                            $('#test-content').text("");
                             getMovieThumbnail(questionData.id, "#qimg", "#qthumblink");
                             $('#qtext').text(questionData.text);
                             for (var i = 0; i < 4; ++i) {
@@ -44,7 +46,7 @@
                     }
                     selectedAnswer = null;
                     correctAnswer = "";
-                    getNewQuestion();
+                    setTimeout(function() { getNewQuestion(); }, 3000);
 			    }
 
                 var countDown = null;
@@ -67,7 +69,6 @@
 				    }
 				    $('#qimg').attr({ src: data.jpg });
 			    }
-
 
 				var newData = {"text":"Who played Fester in The Addams Family?",
 							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
