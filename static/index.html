@@ -50,7 +50,7 @@
                 var countDown = null;
 			    countDown  = function(secs, maxSecs) {
 					$('#countdownbar').css("width", (100 * secs / maxSecs) + "%");
-					$('#countdownbar').css("background", "#" + Math.floor(10 - (10 * secs / maxSecs)) + Math.floor(10 * secs / maxSecs) + "0");
+					$('#countdownbar').css("background", "#" + Math.floor(16 - (16 * secs / maxSecs)).toString(16) + Math.floor(16 * secs / maxSecs).toString(16) + "0");
 				    if (secs < 0) {
 						$('#countdownbar').css("width", "0%");
 					    countDownComplete();
