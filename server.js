@@ -51,7 +51,10 @@ getNextMovie = function(perMovieCallback, endCallback) {
                 "/film/film/genre": [],
                 "/film/film/starring": [
                     {
-                        "/film/performance/actor": null,
+                        "/film/performance/actor": {
+                            "id": null,
+                            "name": null
+                        },
                         "/film/performance/character": null
                     }
                 ],
@@ -111,10 +114,13 @@ storeMovieDetails = function(info) {
     for(var curStar in starInfo) {
         var curDetails = starInfo[curStar];
         var actorName = null;
+        var actorId = null;
         var characterName = null;
-        if(curDetails["/film/performance/actor"]) {
-            actorName = curDetails["/film/performance/actor"];
-            actors.push(actorName);
+        var curActor = curDetails["/film/performance/actor"];
+        if(curActor) {
+            actorName = curActor.name;
+            actorId = curActor.id;
+            actors.push({name: actorName, id: actorId});
         }
         if(curDetails["/film/performance/character"]) {
             characterName = curDetails["/film/performance/character"];
@@ -123,8 +129,10 @@ storeMovieDetails = function(info) {
                 characters.push(characterName);
             }
         }
-        details.actors.push({actor: actorName, character: characterName});
-        details.characters.push({actor: actorName, character: characterName});
+        details.actors.push({actor: actorName, character: characterName, id: actorId});
+        if(characterName) {
+            details.characters.push({actor: {name: actorName, id: actorId}, character: characterName});
+        }
     }
 
     console.log("Adding movie: " + details.title);
@@ -216,6 +224,8 @@ app.get('/question', function(request, response) {
     var question = constructQuestion();
     response.send(JSON.stringify(question));
 });
+
+setTimeout(function() {console.log(JSON.stringify(constructQuestion()))}, 3000);
 
 app.configure(function() {
     app.use(app.router);

@@ -2,7 +2,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-        <title>World of Triviacraft</title>
+        <title>World of TriviaCraft</title>
         <script type="text/javascript" src="libs/js/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="libs/js/jquery-ui-1.8.5.custom.min.js"></script>
         <script type="text/javascript">
@@ -44,28 +44,28 @@
 							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
 							'jpg': 'taf.jpg'};
 
-				$('#qimage').click(function() {
-					updateData(newData);
-				});
+				//$('#qimage').click(function() {
+				//	updateData(newData);
+				//});
 
-                function getMovieThumbnail(objectId) {
-                    $.getJSON("http://www.freebase.com/experimental/topic/basic?callback=?", {id: objectId}, function(response) {
+                function getMovieThumbnail(objectId, imgId, aId) {
+                    $.getJSON("http://www.freebase.com/experimental/topic/standard?callback=?", {id: objectId}, function(response) {
                         var result = response[objectId].result;
                         var thumbnail = result.thumbnail;
                         if(thumbnail) {
-                            $("#qimg").show();
-                            $('#qimg').attr({ src: thumbnail });
+                            $(imgId).show();
+                            $(imgId).attr({ src: thumbnail });
                         } else {
-                            $("#qimg").hide();
-                            $('#qthumblink').attr({ href: "" });
+                            $(imgId).hide();
+                            $(aId).attr({ href: "" });
                         }
                         var webpages = result.webpage;
                         if(webpages && webpages.length > 0) {
-                            $("#qthumblink").attr({href: webpages[0].url});
+                            $(aId).attr({href: webpages[0].url});
                         }
                     });
                 }
-                getMovieThumbnail("/en/margaret_2006");
+                getMovieThumbnail("/en/margaret_2006", "#qimg", "#qthumblink");
             });
         </script>
 		<link rel="stylesheet" type="text/css" media="screen" title="User Defined Style" href="default.css" />
