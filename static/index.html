@@ -3,26 +3,63 @@
 <html>
 <head>
         <title>World of Triviacraft</title>
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.js"></script>
+        <script type="text/javascript" src="libs/js/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="libs/js/jquery-ui-1.8.5.custom.min.js"></script>
         <script type="text/javascript">
-            $(document).ready(function() {
-                /*$.getJSON(
-                        'http://localhost:3000/question',
-                        function(response) {
-                            document.write("<b>" + response.text + "</b><br>");
-                        });*/
+			$(function() {
+			
+			    function countDownComplete () {
+				    $('#test-content').text("Tadah!");				
+			    }
 
-				var data = {"text":"Who played Fester in The Addams Family?",
+                var countDown = null;
+			    countDown  = function(secs) {
+				    if (secs < 0) {
+					    countDownComplete();
+					    return true;
+				    }
+				    $('#cd-num').text(secs);
+				    setTimeout(function() { countDown(secs - 1) }, 1000);
+			    }
+
+			    function updateData(data) {
+				    $('#qtext').text(data.text);
+				    for (j = 0; j <= 4; j++ ) {
+					    $('#answer-text-'+j).text(data.answers[j]);
+				    }
+				    $('#qimg').attr({ src: data.jpg });
+			    }
+
+				countDown(4);
+
+
+				var newData = {"text":"Who played Fester in The Addams Family?",
 							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
 							'jpg': 'taf.jpg'};
 
 				$('#qimage').click(function() {
-					$('#qtext').text(data.text);
-					for (j = 0; j <= 4; j++ ) {
-						$('#answer-text-'+j).html(data.answers[j]);
-					}
-					$('#qimg').attr({ src: data.jpg });
-					});
+					updateData(newData);
+				});
+
+
+                function getMovieThumbnail(objectId) {
+                    $.getJSON("http://www.freebase.com/experimental/topic/basic?callback=?", {id: objectId}, function(response) {
+                        var result = response[objectId].result;
+                        var thumbnail = result.thumbnail;
+                        if(thumbnail) {
+                            $("#qimg").show();
+                            $('#qimg').attr({ src: thumbnail });
+                        } else {
+                            $("#qimg").hide();
+                            $('#qthumblink').attr({ href: "" });
+                        }
+                        var webpages = result.webpage;
+                        if(webpages && webpages.length > 0) {
+                            $("#qthumblink").attr({href: webpages[0].url});
+                        }
+                    });
+                }
+                getMovieThumbnail("/en/margaret_2006");
             });
         </script>
 		<link rel="stylesheet" type="text/css" media="screen" title="User Defined Style" href="default.css" />
@@ -71,7 +108,7 @@
 </head>
 <body>
 <div id="content-box">
-<div id="qimage"><img id="qimg" src="bttf.jpg" /></div>
+<div id="qimage"><a id="qthumblink" href="javascript:void()"><img id="qimg" src="bttf.jpg"/></a></div>
 <noscript><div id="no-script">Please Enable Javascript!</div></noscript>
 <div id="qa-box">
 <div id="qtext">Who played Marty McFly in the movie Back to the Future?</div>
@@ -79,7 +116,7 @@
 <div id="answer-1" class="answer-radio"><input type="radio" name="answer" value="ans1" /><div id="answer-text-1" class="answer-text">Cristopher Lloyd</div></div>
 <div id="answer-2" class="answer-radio"><input type="radio" name="answer" value="ans2" /><div id="answer-text-2" class="answer-text">Betty Grable</div></div>
 <div id="answer-3" class="answer-radio"><input type="radio" name="answer" value="ans3" /><div id="answer-text-3" class="answer-text">Michael J. Fox</div></div>
-<div id="countdown">Countdown: 15 sec</div>
+<div id="countdown">Countdown: <div id="cd-num" style="display:inline;">15</div> sec</div>
 <div id="test-content"><div>
 </div>
 </div>
