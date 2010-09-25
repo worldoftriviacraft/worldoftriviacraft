@@ -21,8 +21,8 @@ var sendResponse = function(response, query, result) {
 var currentQuestion = "";
 var currentCountdown = "";
 
-var maxMovies = 30;
-var chunkSize = 30;
+var maxMovies = 2000;
+var chunkSize = 100;
 var movies = [];
 var directors = [];
 var actors = [];
