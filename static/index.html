@@ -12,7 +12,11 @@
                     function(questionData) {
                         $('#qtext').text(questionData.text);
                         for (var i = 0; i < 4; ++i) {
-                            $('#answer-text-' + i).text(questionData.answers[i]);
+                            if (questionData.answers[i].name != null) {
+                                $('#answer-text-' + i).text(questionData.answers[i].name);
+                            } else {
+                                $('#answer-text-' + i).text(questionData.answers[i]);
+                            }
                         }
                     });
 
