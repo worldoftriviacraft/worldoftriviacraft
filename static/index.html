@@ -14,8 +14,11 @@
                         for (var i = 0; i < 4; ++i) {
                             if (questionData.answers[i].name != null) {
                                 $('#answer-text-' + i).text(questionData.answers[i].name);
+                                $('#answer-img-' + i).show();
+                                getMovieThumbnail(questionData.answers[i].id, "#answer-img-" + i, "nonde");
                             } else {
                                 $('#answer-text-' + i).text(questionData.answers[i]);
+                                $('#answer-img-' + i).hide();
                             }
                         }
                     });

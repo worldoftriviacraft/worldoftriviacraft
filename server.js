@@ -183,35 +183,46 @@ function constructAnswers(question, realAnswer, alternates) {
 
 function constructQuestion() {
     if (movies.length != 0) {
-        var movieIndex = Math.floor(Math.random() * movies.length);
-        var info = movies[movieIndex];
+        var gotQuestion = false;
+        while(!gotQuestion) {
+            var movieIndex = Math.floor(Math.random() * movies.length);
+            var info = movies[movieIndex];
 
-        var questionIndex = Math.floor(Math.random() * 4 /* hardcoded */);
-        var question = {'text': "", 'answers': [], correctAnswerIndex: 0, id: info.id};
-        console.log(questionIndex);
-        switch(questionIndex) {
-            case 0:
-                    question['text'] = "When was " + info.title + " released?";
+            var questionIndex = Math.floor(Math.random() * 4 /* hardcoded */);
+            var question = {'text': "", 'answers': [], correctAnswerIndex: 0, id: info.id};
+            console.log(questionIndex);
+            switch(questionIndex) {
+                case 0:
+                        question['text'] = "When was " + info.title + " released?";
 
-                    var alternates = [];
-                    for (var i = 0; i < 4; ++i) {
-                        alternates[i] = 1980 + Math.floor(Math.random() * 20);
-                    }
-                    constructAnswers(question, parseFloat(info.year), alternates);
-                    break;
-            case 1:
-                    question['text'] = "Who directed the " + info.year + " " + info.genre + " movie " + info.title + "?";
-                    constructAnswers(question, info.director, directors);
-                    break;
-            case 2:
-                    question['text'] = "Who starred in the " + info.year + " movie " + info.title + "?";
-                    constructAnswers(question, info.actors[0].actor, actors);
-                    break;
-            case 3:
-                    console.log(info);
-                    question['text'] = "Who played " + info.characters[0].character + " in " + info.title + "?";
-                    constructAnswers(question, info.characters[0].actor, actors);
-                    break;
+                        var alternates = [];
+                        for (var i = 0; i < 4; ++i) {
+                            alternates[i] = 1980 + Math.floor(Math.random() * 20);
+                        }
+                        constructAnswers(question, parseFloat(info.year), alternates);
+                        gotQuestion = true;
+                        break;
+                case 1:
+                        question['text'] = "Who directed the " + info.year + " " + info.genre + " movie " + info.title + "?";
+                        constructAnswers(question, info.director, directors);
+                        gotQuestion = true;
+                        break;
+                case 2:
+                        if (info.actors.length == 0) continue;
+
+                        question['text'] = "Who starred in the " + info.year + " movie " + info.title + "?";
+                        constructAnswers(question, info.actors[0].actor, actors);
+                        gotQuestion = true;
+                        break;
+                case 3:
+                        if (info.characters.length == 0) continue;
+
+                        console.log(info);
+                        question['text'] = "Who played " + info.characters[0].character + " in " + info.title + "?";
+                        constructAnswers(question, info.characters[0].actor, actors);
+                        gotQuestion = true;
+                        break;
+            }
         }
 
         return question;
