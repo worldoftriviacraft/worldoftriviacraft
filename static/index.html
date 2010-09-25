@@ -7,7 +7,15 @@
         <script type="text/javascript" src="libs/js/jquery-ui-1.8.5.custom.min.js"></script>
         <script type="text/javascript">
 			$(function() {
-			
+                $.getJSON(
+                    "http://localhost:3000/question",
+                    function(questionData) {
+                        $('#qtext').text(questionData.text);
+                        for (var i = 0; i < 4; ++i) {
+                            $('#answer-text-' + i).text(questionData.answers[i]);
+                        }
+                    });
+
 			    function countDownComplete () {
 				    $('#test-content').text("Tadah!");				
 			    }
@@ -32,7 +40,6 @@
 
 				countDown(4);
 
-
 				var newData = {"text":"Who played Fester in The Addams Family?",
 							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
 							'jpg': 'taf.jpg'};
@@ -40,7 +47,6 @@
 				$('#qimage').click(function() {
 					updateData(newData);
 				});
-
 
                 function getMovieThumbnail(objectId) {
                     $.getJSON("http://www.freebase.com/experimental/topic/basic?callback=?", {id: objectId}, function(response) {
