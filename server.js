@@ -21,8 +21,8 @@ var sendResponse = function(response, query, result) {
 var currentQuestion = "";
 var currentCountdown = "";
 
-var maxMovies = 10;
-var chunkSize = 10;
+var maxMovies = 30;
+var chunkSize = 30;
 var movies = [];
 var directors = [];
 var actors = [];
@@ -108,7 +108,7 @@ storeMovieDetails = function(info) {
     }
 
     var starInfo = info["/film/film/starring"];
-    for(curStar in starInfo) {
+    for(var curStar in starInfo) {
         var curDetails = starInfo[curStar];
         var actorName = null;
         var characterName = null;
@@ -153,8 +153,67 @@ app.get("/request_one.json", function(request, response) {
     sendResponse(response, query, result);
 });
 
+function constructAnswers(question, realAnswer, alternates) {
+    var realAnswerIndex = Math.floor(Math.random() * 4);
+
+    for (var i = 0; i < 4; ++i) {
+        if (i === realAnswerIndex) {
+            question['answers'][i] = realAnswer;
+        } else {
+            if (alternates.length != 0) {
+                question['answers'][i] = alternates[Math.floor(Math.random() * alternates.length)];
+            } else {
+                question['answers'][i] = "Beer is good";
+            }
+        }
+    }
+}
+
+function constructQuestion() {
+    if (movies.length != 0) {
+        var movieIndex = Math.floor(Math.random() * movies.length);
+        var info = movies[movieIndex];
+
+        var questionIndex = Math.floor(Math.random() * 4 /* hardcoded */);
+        var question = {'text': "", 'answers': []};
+        console.log(questionIndex);
+        switch(questionIndex) {
+            case 0:
+                    question['text'] = "When was " + info.title + " released?";
+
+                    var realAnswerIndex = Math.floor(Math.random() * 4);
+                    for (var i = 0; i < 4; ++i) {
+                        var answer = 0;
+                        if (i === realAnswerIndex) {
+                            answer = info.year;
+                        } else {
+                            answer = 1980 + Math.floor(Math.random() * 20);
+                        }
+                        question['answers'][i] = answer;
+                    }
+                    break;
+            case 1:
+                    question['text'] = "Who directed the " + info.year + " " + info.genre + " movie " + info.title + "?";
+                    constructAnswers(question, info.director, directors);
+                    break;
+            case 2:
+                    question['text'] = "Who starred in the " + info.year + " movie " + info.title + "?";
+                    constructAnswers(question, info.actors[0].actor, actors);
+                    break;
+            case 3:
+                    question['text'] = "Who played " + info.characters[0].character + " in " + info.title + "?";
+                    constructAnswers(question, info.characters[0].actor, actors);
+                    break;
+        }
+
+        return question;
+    } else {
+        return {'text': "I'm drunk - are you?", answers:['yes', 'no']};
+    }
+}
+
 app.get('/question', function(request, response) {
-    var question = {'text': 'a question', answers:['answer1', 'answer2']};
+    var question = constructQuestion();
     response.send(JSON.stringify(question));
 });
 
