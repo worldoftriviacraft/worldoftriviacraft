@@ -21,6 +21,10 @@ var sendResponse = function(response, query, result) {
 var currentQuestion = "";
 var currentCountdown = "";
 
+var movies = [];
+var currentQueston = "";
+var currentAnswers = [];
+
 var freebase = http.createClient(80, "api.freebase.com");
 var cursor = true;
 var getNextMovie = function(callback) {
@@ -39,7 +43,10 @@ var getNextMovie = function(callback) {
                 "/film/film/initial_release_date": null,
                 "/film/film/directed_by": null,
                 "/film/film/genre": null,
-                "/film/film/starring": [],
+                "/film/film/starring": [
+                    "/film/performance/actor": null,
+                    "/film/performance/character": null
+                ],
                 "limit":         1
             }
         ]
@@ -74,7 +81,25 @@ var getMovieDetails = function(info, callback) {
                     year: info["/film/film/initial_release_date"],
                     director: info["/film/film/directed_by"],
                     genre: info["/film/film/genre"]
+                    actors: [],
+                    characters: []
                   };
+
+    var starInfo = info["/film/film/starring"];
+    for(curStar in starInfo) {
+        var curDetails = starInfo[curStar];
+        var actorName = null;
+        var characterName = null;
+        if(curDetails["/film/performance/actor"]) {
+            actorName = curDetails["/film/performance/actor"];
+        }
+        if(curDetails["/film/performance/character"]) {
+            characterName = curDetails["/film/performance/character"];
+        }
+        details.actors.push({actor: actorName, character: characterName});
+        details.characters.push({actor: actorName, character: characterName});
+    }
+
     var url = "http://www.freebase.com/experimental/topic/standard?id=";
     url += escape(info.id);
 
