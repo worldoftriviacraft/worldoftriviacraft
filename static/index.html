@@ -22,8 +22,9 @@
                             $('#test-content').text("");
                             getMovieThumbnail(questionData.id, "#qimg", "#qthumblink");
                             $('#qtext').text(questionData.text);
+                            $("img").attr("src", "");
                             for (var i = 0; i < 4; ++i) {
-                                if (questionData.answers[i].name != null) {
+                                if (questionData.answers[i].name) {
                                     correctAnswer = questionData.answers[questionData.correctAnswerIndex].name;
                                     $('#answer-text-' + i).text(questionData.answers[i].name);
                                     getMovieThumbnail(questionData.answers[i].id, "#answer-img-" + i, "#answer-img-href-" + i);
