@@ -11,16 +11,20 @@
                 var username = null;
                 var selectedAnswer = null;
                 var correctAnswer = "";
+
                 $.getJSON(
                     "http://localhost:3000/question",
                     function(questionData) {
+                        getMovieThumbnail(questionData.id, "#qimg", "#qthumblink");
                         $('#qtext').text(questionData.text);
                         for (var i = 0; i < 4; ++i) {
                             if (questionData.answers[i].name != null) {
+                                correctAnswer = questionData.answers[questionData.correctAnswerIndex].name;
                                 $('#answer-text-' + i).text(questionData.answers[i].name);
                                 $('#answer-img-' + i).show();
-                                getMovieThumbnail(questionData.answers[i].id, "#answer-img-" + i, "nonde");
+                                getMovieThumbnail(questionData.answers[i].id, "#answer-img-" + i, "#answer-img-href-" + i);
                             } else {
+                                correctAnswer = questionData.answers[questionData.correctAnswerIndex];
                                 $('#answer-text-' + i).text(questionData.answers[i]);
                                 $('#answer-img-' + i).hide();
                             }
@@ -177,32 +181,32 @@
         <span>Your score:</span><span id="score"></span>
     </div>
     <p id="score"></p>
-        <div id="content-box">
-        <div id="qimage"><a id="qthumblink" href="javascript:void()"><img id="qimg" src="bttf.jpg"/></a></div>
-        <noscript><div id="no-script">Please Enable Javascript!</div></noscript>
-        <div id="qa-box">
-            <div id="qtext">Who played Marty McFly in the movie Back to the Future?</div>
-            <div id="answer-0" class="answer-radio">
-	            <img id="answer-img-0" src="http://img.freebase.com/api/trans/image_thumb/m/0238_1f?pad=1&maxheight=70&mode=fillcrop&maxwidth=75" />
-	            <div id="answer-text-0" class="answer-text">Mark Hamill</div>
-            </div>
-            <div id="answer-1" class="answer-radio">
-	            <img id="answer-img-1" src="http://img.freebase.com/api/trans/image_thumb/en/christopher_lloyd?errorid=%2Ffreebase%2Fno_image_png&maxheight=75&mode=fillcropmid&maxwidth=75" />
-	            <div id="answer-text-1" class="answer-text">Cristopher Lloyd</div>
-            </div>
-            <div id="answer-2" class="answer-radio">
-	            <img id="answer-img-2" src="http://img.freebase.com/api/trans/image_thumb/wikipedia/images/en_id/2625300?pad=1&maxheight=70&mode=fillcrop&maxwidth=75" />
-	            <div id="answer-text-2" class="answer-text">Betty Grable</div>
-            </div>
-            <div id="answer-3" class="answer-radio">
-	            <img id="answer-img-3" src="http://img.freebase.com/api/trans/image_thumb/en/michael_j_fox?errorid=%2Ffreebase%2Fno_image_png&maxheight=75&mode=fillcropmid&maxwidth=75" />
-	            <div id="answer-text-3" class="answer-text">Michael J. Fox</div>
-            </div>
-            <div id="countdown">Countdown: <span id="cd-num">15</span> sec</div>
-            <div id="countdownbar"></div>
-            <div id="test-content"></div>
-        </div>
-    </div>
+<div id="content-box">
+<div id="qimage"><a id="qthumblink" href="javascript:void()"><img id="qimg" src="bttf.jpg"/></a></div>
+<noscript><div id="no-script">Please Enable Javascript!</div></noscript>
+<div id="qa-box">
+<div id="qtext">Who played Marty McFly in the movie Back to the Future?</div>
+<div id="answer-0" class="answer-radio">
+    <a id="answer-img-href-0" href=""><img id="answer-img-0" src="http://img.freebase.com/api/trans/image_thumb/m/0238_1f?pad=1&maxheight=70&mode=fillcrop&maxwidth=75" /></a>
+	<div id="answer-text-0" class="answer-text">Mark Hamill</div>
+</div>
+<div id="answer-1" class="answer-radio">
+    <a id="answer-img-href-1" href=""><img id="answer-img-1" src="http://img.freebase.com/api/trans/image_thumb/en/christopher_lloyd?errorid=%2Ffreebase%2Fno_image_png&maxheight=75&mode=fillcropmid&maxwidth=75" /></a>
+	<div id="answer-text-1" class="answer-text">Cristopher Lloyd</div>
+</div>
+<div id="answer-2" class="answer-radio">
+    <a id="answer-img-href-2" href=""><img id="answer-img-2" src="http://img.freebase.com/api/trans/image_thumb/wikipedia/images/en_id/2625300?pad=1&maxheight=70&mode=fillcrop&maxwidth=75" /></a>
+	<div id="answer-text-2" class="answer-text">Betty Grable</div>
+</div>
+<div id="answer-3" class="answer-radio">
+    <a id="answer-img-href-3" href=""><img id="answer-img-3" src="http://img.freebase.com/api/trans/image_thumb/en/michael_j_fox?errorid=%2Ffreebase%2Fno_image_png&maxheight=75&mode=fillcropmid&maxwidth=75" /></a>
+	<div id="answer-text-3" class="answer-text">Michael J. Fox</div>
+</div>
+<div id="countdown">Countdown: <div id="cd-num" style="display:inline;">15</div> sec</div>
+<div id="countdownbar"></div>
+<div id="test-content"></div>
+</div>
+</div>
     <div id="winInfo"></div>
 </body>
 </html>
