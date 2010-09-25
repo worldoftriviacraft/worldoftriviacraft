@@ -3,27 +3,49 @@
 <html>
 <head>
         <title>World of Triviacraft</title>
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.js"></script>
+        <script type="text/javascript" src="jquery-1.4.2.js"></script>
         <script type="text/javascript">
+			// http://code.jquery.com/jquery-1.4.2.js
+			
+			function countDownComplete () {
+				$('#test-content').text("Tadah!");				
+			}
+
+			function countDown (secs) {
+				if (secs < 0) {
+					countDownComplete();
+					return true;
+				}
+				$('#cd-num').text(secs);
+				setTimeout("countDown(" + (secs - 1) + ")", 1000);
+			}
+
+			function updateData(data) {
+				$('#qtext').text(data.text);
+				for (j = 0; j <= 4; j++ ) {
+					$('#answer-text-'+j).text(data.answers[j]);
+				}
+				$('#qimg').attr({ src: data.jpg });
+			}
+
             $(document).ready(function() {
+				countDown(4);
+
                 /*$.getJSON(
                         'http://localhost:3000/question',
                         function(response) {
                             document.write("<b>" + response.text + "</b><br>");
                         });*/
 
-				var data = {"text":"Who played Fester in The Addams Family?",
+				var newData = {"text":"Who played Fester in The Addams Family?",
 							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
 							'jpg': 'taf.jpg'};
 
 				$('#qimage').click(function() {
-					$('#qtext').text(data.text);
-					for (j = 0; j <= 4; j++ ) {
-						$('#answer-text-'+j).html(data.answers[j]);
-					}
-					$('#qimg').attr({ src: data.jpg });
-					});
-            });
+					updateData(newData);
+				});
+
+			});
         </script>
 		<link rel="stylesheet" type="text/css" media="screen" title="User Defined Style" href="default.css" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -79,7 +101,7 @@
 <div id="answer-1" class="answer-radio"><input type="radio" name="answer" value="ans1" /><div id="answer-text-1" class="answer-text">Cristopher Lloyd</div></div>
 <div id="answer-2" class="answer-radio"><input type="radio" name="answer" value="ans2" /><div id="answer-text-2" class="answer-text">Betty Grable</div></div>
 <div id="answer-3" class="answer-radio"><input type="radio" name="answer" value="ans3" /><div id="answer-text-3" class="answer-text">Michael J. Fox</div></div>
-<div id="countdown">Countdown: 15 sec</div>
+<div id="countdown">Countdown: <div id="cd-num" style="display:inline;">15</div> sec</div>
 <div id="test-content"><div>
 </div>
 </div>
