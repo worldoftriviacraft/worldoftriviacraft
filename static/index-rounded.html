@@ -1,0 +1,248 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+        <title>World of TriviaCraft</title>
+        <script type="text/javascript" src="libs/js/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="libs/js/jquery-ui-1.8.5.custom.min.js"></script>
+        <script type="text/javascript">
+			$(function() {
+                var score = 0;
+                var username = null;
+                var selectedAnswer = null;
+                var correctAnswer = "";
+                var enableCountdown = true;
+
+                function getNewQuestion() {
+                    $.getJSON(
+                        "http://localhost:3000/question",
+                        function(questionData) {
+                            $('#winInfo').text("");
+                            $('#test-content').text("");
+                            getMovieThumbnail(questionData.id, "#qimg", "#qthumblink");
+                            $('#qtext').text(questionData.text);
+                            for (var i = 0; i < 4; ++i) {
+                                if (questionData.answers[i].name != null) {
+                                    correctAnswer = questionData.answers[questionData.correctAnswerIndex].name;
+                                    $('#answer-text-' + i).text(questionData.answers[i].name);
+                                    getMovieThumbnail(questionData.answers[i].id, "#answer-img-" + i, "#answer-img-href-" + i);
+                                    $('#answer-img-' + i).show();
+                                } else {
+                                    correctAnswer = questionData.answers[questionData.correctAnswerIndex];
+                                    $('#answer-text-' + i).text(questionData.answers[i]);
+                                    $('#answer-img-' + i).hide();
+                                }
+                            }
+                        });
+                    enableCountdown = true;
+                    countDown(20, 20);
+                }
+
+			    function countDownComplete () {
+				    if(selectedAnswer && selectedAnswer == correctAnswer) {
+                        score += 100;
+                        $("#score").text(score);
+                        $("#winInfo").text("Correct! You get 100 points!");
+                    } else if(selectedAnswer) {
+                        $("#winInfo").text("Doh! The correct answer was " + correctAnswer);
+                    } else {
+                        $("#winInfo").text("Time ran out :/... the correct answer was " + correctAnswer);
+                    }
+                    selectedAnswer = null;
+                    correctAnswer = "";
+                    setTimeout( getNewQuestion, 3000);
+			    }
+
+                var countDown = null;
+			    countDown  = function(secs, maxSecs) {
+					$('#countdownbar').css("width", (100 * secs / maxSecs) + "%");
+					$('#countdownbar').css("background", "#" + Math.floor(16 - (16 * secs / maxSecs)).toString(16) + Math.floor(16 * secs / maxSecs).toString(16) + "0");
+				    if (secs < 0) {
+						$('#countdownbar').css("width", "0%");
+					    countDownComplete();
+					    return true;
+				    }
+				    $('#cd-num').text(Math.floor(secs));
+                    if(enableCountdown) {
+        				    setTimeout(function() { countDown(secs - .05, maxSecs) }, 50);
+                    }
+			    }
+
+			    function updateData(data) {
+				    $('#qtext').text(data.text);
+				    for (j = 0; j <= 4; j++ ) {
+					    $('#answer-text-'+j).text(data.answers[j]);
+				    }
+				    $('#qimg').attr({ src: data.jpg });
+			    }
+
+				var newData = {"text":"Who played Fester in The Addams Family?",
+							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
+							'jpg': 'taf.jpg'};
+
+                function getMovieThumbnail(objectId, imgId, aId) {
+                    $.getJSON("http://www.freebase.com/experimental/topic/standard?callback=?", {id: objectId}, function(response) {
+                        var result = response[objectId].result;
+                        var thumbnail = result.thumbnail;
+                        if(thumbnail) {
+                            $(imgId).show();
+                            $(imgId).attr({ src: thumbnail });
+                        } else {
+                            $(imgId).hide();
+                            $(aId).attr({ href: "" });
+                        }
+                        var webpages = result.webpage;
+                        if(webpages && webpages.length > 0) {
+                            $(aId).attr({href: webpages[0].url});
+                        }
+                    });
+                }
+
+                //getMovieThumbnail("/en/margaret_2006", "#qimg", "#qthumblink");
+                getNewQuestion();
+
+				$(".answer-radio").hover(function() {
+					$(this).css("border", "2px dashed #6a6");
+				}, function() {
+					$(this).css("border", "");
+				});
+
+				$(".answer-radio").click(function(){
+                    selectedAnswer = $(this).find(".answer-text").text()
+					$('#test-content').text("You Selected: " + $(this).find(".answer-text").text());
+					$('.answer-radio').removeClass("selected-question");
+					$(this).toggleClass("selected-question");
+					$(this).css("border", "2px dashed #636");
+                    if(enableCountdown)
+                        countDownComplete();
+                    enableCountdown = false;
+				});
+
+                $("#login").click(function() {
+                    if($("#login").text() == "") {
+                        alert("Please specify a username");
+                    } else {
+                        username = $("#username").val();
+                        score = 0;
+                        $("#usernameDisplay").text("Welcome, " + username + "!");
+                        $("#score").text(score);
+                        $("#loginForm").remove();
+                        $("#scoreDisplay").show();
+                    }
+                    return false;
+                });
+            });
+        </script>
+		<link rel="stylesheet" type="text/css" media="screen" title="User Defined Style" href="default.css" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<style type="text/css">
+        body {
+            background-color:#fff;
+        }
+
+        #content-box {
+            margin:0 10%;
+            text-align:left;
+            width:600px;
+            background-color:#9BD1FA;
+        }
+        #qa-box {
+            margin:0px auto;
+            margin-top: 20px;
+            max-width:60%;
+            border: 1px solid #0091a7;
+            border-width: 1px 0;
+        }
+        #qimage {
+            margin:0px auto;
+            width:95px;
+            height:150px;
+        }
+        .answer-radio {
+            font-size: 12pt;
+            border: 2px dashed #fff;
+        }
+        .answer-text {
+            display: inline;
+        }
+        .selected-question {
+            border: 2px dashed #636;
+        }
+        p {margin-left:20px;}
+        body {
+            margin:50px 0px;
+            padding:0px;
+            text-align:center;
+        }
+        #countdownbar {
+            background: #afa;
+            height: 10px;
+            width: 100%;
+        }
+        #no-script {
+            background: #ffdee7;
+            padding: 10px 20px;
+            font: normal 13px Arial;
+            border: 1px solid #ffa6ae;
+            border-width: 1px 0;
+            color: #484848;
+            text-align: center;
+            margin: 10px 0
+        }
+        #test-content {
+            margin-top: 20px;
+        }
+        #winInfo {
+            width: 100%;
+        }
+
+        b.rtop, b.rbottom {display:block; background: #FFF}
+        b.rtop b, b.rbottom b{display:block;height: 1px; overflow: hidden; background: #9BD1FA}
+        b.r1{margin: 0 5px}
+        b.r2{margin: 0 3px}
+        b.r3{margin: 0 2px}
+        b.rtop b.r4, b.rbottom b.r4{margin: 0 1px;height: 2px}
+	</style>
+</head>
+<body>
+    <form id="loginForm">
+        <label for="username">Username: </label>
+        <input type="text" id="username"/>
+        <button id="login">Login</button>
+    </form>
+    <div id="scoreDisplay"  style="display: none">
+        <div id="usernameDisplay"></div>
+        <span>Your score:</span><span id="score"></span>
+    </div>
+    <p id="score"></p>
+<div id="content-box">
+    <b class="rtop"><b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b></b>
+    <div id="qimage"><a id="qthumblink" href="javascript:void()"><img id="qimg" src="bttf.jpg"/></a></div>
+    <noscript><div id="no-script">Please Enable Javascript!</div></noscript>
+    <div id="qa-box">
+        <div id="qtext">Who played Marty McFly in the movie Back to the Future?</div>
+        <div id="answer-0" class="answer-radio">
+            <a id="answer-img-href-0" href=""><img id="answer-img-0" src="http://img.freebase.com/api/trans/image_thumb/m/0238_1f?pad=1&maxheight=70&mode=fillcrop&maxwidth=75" /></a>
+            <div id="answer-text-0" class="answer-text">Mark Hamill</div>
+        </div>
+        <div id="answer-1" class="answer-radio">
+            <a id="answer-img-href-1" href=""><img id="answer-img-1" src="http://img.freebase.com/api/trans/image_thumb/en/christopher_lloyd?errorid=%2Ffreebase%2Fno_image_png&maxheight=75&mode=fillcropmid&maxwidth=75" /></a>
+            <div id="answer-text-1" class="answer-text">Cristopher Lloyd</div>
+        </div>
+        <div id="answer-2" class="answer-radio">
+            <a id="answer-img-href-2" href=""><img id="answer-img-2" src="http://img.freebase.com/api/trans/image_thumb/wikipedia/images/en_id/2625300?pad=1&maxheight=70&mode=fillcrop&maxwidth=75" /></a>
+            <div id="answer-text-2" class="answer-text">Betty Grable</div>
+        </div>
+        <div id="answer-3" class="answer-radio">
+            <a id="answer-img-href-3" href=""><img id="answer-img-3" src="http://img.freebase.com/api/trans/image_thumb/en/michael_j_fox?errorid=%2Ffreebase%2Fno_image_png&maxheight=75&mode=fillcropmid&maxwidth=75" /></a>
+            <div id="answer-text-3" class="answer-text">Michael J. Fox</div>
+        </div>
+        <div id="countdown">Countdown: <div id="cd-num" style="display:inline;">15</div> sec</div>
+        <div id="countdownbar"></div>
+        <div id="test-content"></div>
+    </div>
+    <div id="winInfo"></div>
+    <b class="rbottom"><b class="r4"></b> <b class="r3"></b> <b class="r2"></b> <b class="r1"></b></b> 
+</div>
+</body>
+</html>
