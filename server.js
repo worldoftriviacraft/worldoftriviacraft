@@ -23,8 +23,9 @@ app.get("/request_one.json", function(request, response) {
 
 
 app.get('/question', function(request, response) {
-    response.send('a question')
-})
+    var question = {'text': 'a question', answers:['answer1', 'answer2']};
+    response.send(JSON.stringify(question));
+});
 
 app.configure(function() {
     app.use(app.router);
