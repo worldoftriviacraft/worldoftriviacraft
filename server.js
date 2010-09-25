@@ -153,7 +153,6 @@ app.get("/request_one.json", function(request, response) {
     sendResponse(response, query, result);
 });
 
-
 app.get('/question', function(request, response) {
     var question = {'text': 'a question', answers:['answer1', 'answer2']};
     response.send(JSON.stringify(question));
