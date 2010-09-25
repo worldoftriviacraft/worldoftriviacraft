@@ -21,6 +21,11 @@ app.get("/request_one.json", function(request, response) {
     sendResponse(response, query, result);
 });
 
+
+app.get('/question', function(request, response) {
+    response.send('a question')
+})
+
 app.configure(function() {
     app.use(app.router);
     app.use(express.methodOverride());
