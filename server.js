@@ -1,5 +1,8 @@
 var express = require("express");
+var querystring = require("querystring");
+var http = require('http');
 var url = require("url");
+var io = require("./static/libs/socketio");
 
 var app = express.createServer();
 
@@ -14,6 +17,112 @@ var sendResponse = function(response, query, result) {
     }
     response.end();
 }
+
+var currentQuestion = "";
+var currentCountdown = "";
+
+var movies = [];
+var currentQueston = "";
+var currentAnswers = [];
+
+var freebase = http.createClient(80, "api.freebase.com");
+var cursor = true;
+var getNextMovie = function(callback) {
+    var params = {
+        "cursor": cursor,
+        "query":[
+            {
+                "type":          "/film/film",
+                "a:initial_release_date>=": "1980",
+                "a:initial_release_date<=": "2010",
+                "a:/film/film/country": "United States of America",
+                "a:/film/film/rating<=": "S",
+                "sort":          "-/film/film/initial_release_date",
+                "name":          null,
+                "id":            null,
+                "/film/film/initial_release_date": null,
+                "/film/film/directed_by": null,
+                "/film/film/genre": null,
+                "/film/film/starring": [
+                    "/film/performance/actor": null,
+                    "/film/performance/character": null
+                ],
+                "limit":         1
+            }
+        ]
+    }
+
+    var url = "/api/service/mqlread?query=";
+    url += escape(JSON.stringify(params));
+    var request = freebase.request("GET", url);
+    request.end();
+    request.on("response", function(response) {
+        console.log("Movie list request status: " + response.statusCode);
+        response.setEncoding('utf8');
+        var fullResponse = "";
+        response.on("data", function(chunk) {
+            fullResponse += chunk;
+        });
+        response.on("end", function() {
+            console.log("Movie list response: " + fullResponse);
+            var info = JSON.parse(fullResponse);
+            cursor = info.cursor;
+            if(callback) {
+                callback(info);
+            }
+        });
+    });
+}
+
+var getMovieDetails = function(info, callback) {
+    var details = {
+                    id: info.id,
+                    title: info.name,
+                    year: info["/film/film/initial_release_date"],
+                    director: info["/film/film/directed_by"],
+                    genre: info["/film/film/genre"]
+                    actors: [],
+                    characters: []
+                  };
+
+    var starInfo = info["/film/film/starring"];
+    for(curStar in starInfo) {
+        var curDetails = starInfo[curStar];
+        var actorName = null;
+        var characterName = null;
+        if(curDetails["/film/performance/actor"]) {
+            actorName = curDetails["/film/performance/actor"];
+        }
+        if(curDetails["/film/performance/character"]) {
+            characterName = curDetails["/film/performance/character"];
+        }
+        details.actors.push({actor: actorName, character: characterName});
+        details.characters.push({actor: actorName, character: characterName});
+    }
+
+    var url = "http://www.freebase.com/experimental/topic/standard?id=";
+    url += escape(info.id);
+
+    var request = freebase.request("GET", url);
+    request.end();
+    request.on("response", function(response) {
+        console.log("Movie details request status: " + response.statusCode);
+        response.setEncoding('utf8');
+        var fullResponse = "";
+        response.on("data", function(chunk) {
+            fullResponse += chunk;
+        });
+        response.on("end", function() {
+            console.log("Movie details response: " + fullResponse);
+            var details = JSON.parse(fullResponse);
+            if(callback) {
+                callback(info);
+            }
+        });
+    });
+}
+
+getNextMovie();
 
 app.get("/request_one.json", function(request, response) {
     var query = url.parse(request.url, true).query;
