@@ -52,7 +52,7 @@
                 var countDown = null;
 			    countDown  = function(secs, maxSecs) {
 					$('#countdownbar').css("width", (100 * secs / maxSecs) + "%");
-					$('#countdownbar').css("background", "#" + Math.floor(10 - (10 * secs / maxSecs)) + Math.floor(10 * secs / maxSecs) + "0");
+					$('#countdownbar').css("background", "#" + Math.floor(16 - (16 * secs / maxSecs)).toString(16) + Math.floor(16 * secs / maxSecs).toString(16) + "0");
 				    if (secs < 0) {
 						$('#countdownbar').css("width", "0%");
 					    countDownComplete();
@@ -98,12 +98,14 @@
 				$(".answer-radio").hover(function() {
 					$(this).css("border", "2px dashed #6a6");
 				}, function() {
-					$(this).css("border", "2px dashed #fff");
+					$(this).css("border", "");
 				});
 
 				$(".answer-radio").click(function(){
-                    selectedAnswer = $(this).find(".answer-text").text();
-					$('#test-content').text("You selected: " + $(this).find(".answer-text").text());
+					$('#test-content').text("You Selected: " + $(this).find(".answer-text").text());
+					$('.answer-radio').removeClass("selected-question");
+					$(this).toggleClass("selected-question");
+					$(this).css("border", "2px dashed #636");
 				});
 
                 $("#login").click(function() {
@@ -147,6 +149,9 @@
 	}
 	.answer-text {
 		display: inline;
+	}
+	.selected-question {
+		border: 2px dashed #636;
 	}
 	p {margin-left:20px;}
 	body {
