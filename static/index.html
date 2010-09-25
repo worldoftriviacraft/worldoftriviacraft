@@ -25,13 +25,15 @@
 			    }
 
                 var countDown = null;
-			    countDown  = function(secs) {
+			    countDown  = function(secs, maxSecs) {
+					$('#countdownbar').css("width", (100 * secs / maxSecs) + "%");
 				    if (secs < 0) {
+						$('#countdownbar').css("width", "0%");
 					    countDownComplete();
 					    return true;
 				    }
-				    $('#cd-num').text(secs);
-				    setTimeout(function() { countDown(secs - 1) }, 1000);
+				    $('#cd-num').text(Math.floor(secs));
+				    setTimeout(function() { countDown(secs - .05, maxSecs) }, 50);
 			    }
 
 			    function updateData(data) {
@@ -42,7 +44,7 @@
 				    $('#qimg').attr({ src: data.jpg });
 			    }
 
-				countDown(4);
+				countDown(4, 4);
 
 				var newData = {"text":"Who played Fester in The Addams Family?",
 							'answers':['Raul Julia', 'Danny DeVito', 'Christopher Lloyd', 'Peter Sellers'],
@@ -104,6 +106,11 @@
 		padding:0px;
 		text-align:center;
 	}
+	#countdownbar {
+		background: #afa;
+		height: 10px;
+		width: 100%;
+	}
 	#no-script {
 		background: #ffdee7;
 		padding: 10px 20px;
@@ -122,11 +129,28 @@
 <noscript><div id="no-script">Please Enable Javascript!</div></noscript>
 <div id="qa-box">
 <div id="qtext">Who played Marty McFly in the movie Back to the Future?</div>
-<div id="answer-0" class="answer-radio"><input type="radio" name="answer" value="ans0" /><div id="answer-text-0" class="answer-text">Mark Hamil</div></div>
-<div id="answer-1" class="answer-radio"><input type="radio" name="answer" value="ans1" /><div id="answer-text-1" class="answer-text">Cristopher Lloyd</div></div>
-<div id="answer-2" class="answer-radio"><input type="radio" name="answer" value="ans2" /><div id="answer-text-2" class="answer-text">Betty Grable</div></div>
-<div id="answer-3" class="answer-radio"><input type="radio" name="answer" value="ans3" /><div id="answer-text-3" class="answer-text">Michael J. Fox</div></div>
+<div id="answer-0" class="answer-radio">
+	<img id="answer-img-0" src="http://img.freebase.com/api/trans/image_thumb/m/0238_1f?pad=1&maxheight=70&mode=fillcrop&maxwidth=75" />
+	<input type="radio" name="answer" value="ans0" />
+	<div id="answer-text-0" class="answer-text">Mark Hamill</div>
+</div>
+<div id="answer-1" class="answer-radio">
+	<img id="answer-img-0" src="http://img.freebase.com/api/trans/image_thumb/en/christopher_lloyd?errorid=%2Ffreebase%2Fno_image_png&maxheight=75&mode=fillcropmid&maxwidth=75" />
+	<input type="radio" name="answer" value="ans1" />
+	<div id="answer-text-1" class="answer-text">Cristopher Lloyd</div>
+</div>
+<div id="answer-2" class="answer-radio">
+	<img id="answer-img-0" src="http://img.freebase.com/api/trans/image_thumb/wikipedia/images/en_id/2625300?pad=1&maxheight=70&mode=fillcrop&maxwidth=75" />
+	<input type="radio" name="answer" value="ans2" />
+	<div id="answer-text-2" class="answer-text">Betty Grable</div>
+</div>
+<div id="answer-3" class="answer-radio">
+	<img id="answer-img-0" src="http://img.freebase.com/api/trans/image_thumb/en/michael_j_fox?errorid=%2Ffreebase%2Fno_image_png&maxheight=75&mode=fillcropmid&maxwidth=75" />
+	<input type="radio" name="answer" value="ans3" />
+	<div id="answer-text-3" class="answer-text">Michael J. Fox</div>
+</div>
 <div id="countdown">Countdown: <div id="cd-num" style="display:inline;">15</div> sec</div>
+<div id="countdownbar"><div>
 <div id="test-content"><div>
 </div>
 </div>

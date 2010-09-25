@@ -47,7 +47,12 @@ getNextMovie = function(perMovieCallback, endCallback) {
                 "name":          null,
                 "id":            null,
                 "/film/film/initial_release_date": null,
-                "/film/film/directed_by": [],
+                "/film/film/directed_by": [
+                    {
+                        "id": null,
+                        "name": null
+                    }
+                ],
                 "/film/film/genre": [],
                 "/film/film/starring": [
                     {
@@ -105,8 +110,9 @@ storeMovieDetails = function(info) {
 
     if(info["/film/film/genre"])
         details.genre = info["/film/film/genre"][0];
-    if(info["/film/film/directed_by"]) {
-        details.director = info["/film/film/directed_by"][0];
+    var directedBy = info["/film/film/directed_by"];
+    if(directedBy) {
+        details.director = {id: directedBy[0].id, name: directedBy[0].name};
         directors.push(details.director);
     }
 
@@ -157,12 +163,6 @@ requestMoreMovies = function() {
 }
 
 getNextMovie(storeMovieDetails, requestMoreMovies);
-
-app.get("/request_one.json", function(request, response) {
-    var query = url.parse(request.url, true).query;
-    var result = {youSaid: query.say};
-    sendResponse(response, query, result);
-});
 
 function constructAnswers(question, realAnswer, alternates) {
     var correctAnswerIndex = Math.floor(Math.random() * 4);
@@ -220,12 +220,15 @@ function constructQuestion() {
     }
 }
 
+var question = null;
+
 app.get('/question', function(request, response) {
-    var question = constructQuestion();
+    if(!question)
+        question = constructQuestion();
     response.send(JSON.stringify(question));
 });
 
-setTimeout(function() {console.log(JSON.stringify(constructQuestion()))}, 3000);
+setInterval(function() { question = constructQuestion(); console.log("new question: " + JSON.stringify(question)) }, 5000);
 
 app.configure(function() {
     app.use(app.router);
